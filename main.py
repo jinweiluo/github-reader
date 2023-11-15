@@ -62,8 +62,8 @@ async def print_repo_url(repo: GitRepo):
         }
         response = requests.post(external_api_url, json=payload, headers=headers)
         print(response)
-        content = response
-        print(response)
+        content = response.json()
+        print(content)
         return {"content": content[:50000]}
 
     except Exception as e:
