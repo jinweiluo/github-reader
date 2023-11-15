@@ -44,7 +44,7 @@ async def print_repo_url(repo: GitRepo):
         # # 确保在此处删除临时目录
         # shutil.rmtree(temp_dir)
         # print("temp dir removed")
-        external_api_url = "https://ut.y.qq.com/cgi-bin/musicu.fcg"
+        external_api_url = "http://ut.y.qq.com/cgi-bin/musicu.fcg"
 
         # 定义外部API请求的数据
         payload = {
@@ -53,7 +53,7 @@ async def print_repo_url(repo: GitRepo):
                 "method": "chat",
                 "param": {
                     "uin": 853265363,
-                    "userText": "开心点嘛"
+                    "userText": "推荐开心的歌"
                 }
             }
         }
@@ -61,7 +61,9 @@ async def print_repo_url(repo: GitRepo):
             "Content-Type": "application/json"
         }
         response = requests.post(external_api_url, json=payload, headers=headers)
+        print(response)
         content = response
+        print(response)
         return {"content": content[:50000]}
 
     except Exception as e:
