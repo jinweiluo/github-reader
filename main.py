@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import os
 import shutil
 import asyncio
+import requests
 from git import Repo
 
 app = FastAPI()
@@ -21,34 +22,52 @@ async def get_main():
 async def print_repo_url(repo: GitRepo):
     git_url = repo.git_url
     try:
-        repo_name = git_url.split("/")[-1]
-        repo_name = (
-            repo_name.replace(".git", "") if repo_name.endswith(".git") else repo_name
-        )
+        # repo_name = git_url.split("/")[-1]
+        # repo_name = (
+        #     repo_name.replace(".git", "") if repo_name.endswith(".git") else repo_name
+        # )
+        #
+        # temp_dir = f"./temp_{repo_name}"
+        # if os.path.exists(temp_dir):
+        #     shutil.rmtree(temp_dir)
+        # os.makedirs(temp_dir)
+        #
+        # repo_dir = os.path.join(temp_dir, repo_name)
+        # print("start cloning")
+        # # 异步克隆仓库
+        # await clone_repo_async(git_url, repo_dir)
+        #
+        # print("start reading")
+        # # 异步读取所有文件
+        # content = await read_all_files_async(repo_dir)
+        # print("read finished. conetent length: ", len(content))
+        # # 确保在此处删除临时目录
+        # shutil.rmtree(temp_dir)
+        # print("temp dir removed")
+        external_api_url = "https://ut.y.qq.com/cgi-bin/musicu.fcg"
 
-        temp_dir = f"./temp_{repo_name}"
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir)
-        os.makedirs(temp_dir)
-
-        repo_dir = os.path.join(temp_dir, repo_name)
-        print("start cloning")
-        # 异步克隆仓库
-        await clone_repo_async(git_url, repo_dir)
-
-        print("start reading")
-        # 异步读取所有文件
-        content = await read_all_files_async(repo_dir)
-        print("read finished. conetent length: ", len(content))
-        # 确保在此处删除临时目录
-        shutil.rmtree(temp_dir)
-        print("temp dir removed")
+        # 定义外部API请求的数据
+        payload = {
+            "req": {
+                "module": "music.ai.CAiPet",
+                "method": "chat",
+                "param": {
+                    "uin": 853265363,
+                    "userText": "开心点嘛"
+                }
+            }
+        }
+        headers = {
+            "Content-Type": "application/json"
+        }
+        response = requests.post(external_api_url, json=payload, headers=headers)
+        content = response
         return {"content": content[:50000]}
 
     except Exception as e:
-        # 如果出现异常，也应该清理临时目录
-        if os.path.exists(temp_dir):
-            shutil.rmtree(temp_dir)
+        # # 如果出现异常，也应该清理临时目录
+        # if os.path.exists(temp_dir):
+        #     shutil.rmtree(temp_dir)
         raise HTTPException(status_code=500, detail=str(e))
 
 
